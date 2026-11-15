@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proteine Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.2/3Dmol-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.2/cytoscape.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<header class="top">
+  <h1>Proteine</h1>
+  <form id="search" class="search" autocomplete="off">
+    <input id="q" type="search" placeholder="Nome, gene, ID UniProt (P04637) o PDB (1TUP)" aria-label="Cerca proteina">
+    <button type="submit">Cerca</button>
+    <ul id="results" class="results" hidden></ul>
+  </form>
+</header>
+<nav id="tabs" class="tabs" role="tablist" aria-label="Proteine aperte"></nav>
+<main id="panels">
+  <p id="empty" class="empty">Cerca una proteina e clicca un risultato: si aprirà in una nuova scheda.</p>
+</main>
+
+<template id="tpl">
+<section class="panel" role="tabpanel">
+  <div class="actions">
+    <strong>Analisi approfondita</strong>
+    <a class="btn primary" data-l="af" target="_blank" rel="noopener">AlphaFold DB: struttura e mutazioni</a>
+    <a class="btn primary" data-l="pk" target="_blank" rel="noopener">PrankWeb: tasche di legame</a>
+    <a class="btn ghost" data-l="up" target="_blank" rel="noopener">UniProt</a>
+    <a class="btn ghost" data-l="st" target="_blank" rel="noopener">STRING</a>
+  </div>
+  <div class="grid">
+    <article class="card"><h3>Struttura 3D <small data-k="src"></small></h3><div class="state"></div><div class="body viewer" data-k="viewer"></div></article>
+    <article class="card"><h3>Identità, funzione e ubicazione</h3><div class="state"></div><div class="body info" data-k="info"></div></article>
+    <article class="card"><h3>Rete di interazioni (STRING)</h3><div class="state"></div><div class="body" data-k="net"></div></article>
+    <article class="card"><h3>Partner validati vs predetti</h3><div class="state"></div>
+      <div class="body"><div class="legend"><i class="v"></i>Validati sperimentalmente <i class="p"></i>Predetti in silico</div><div class="chartbox"><canvas data-k="chart"></canvas></div></div></article>
+  </div>
+</section>
+</template>
+</body>
+</html>
