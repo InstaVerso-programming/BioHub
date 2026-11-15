@@ -1,4 +1,4 @@
-import { searchProteins, getProtein, getStructure, getPartners } from './api.js';
+import { searchProteins, getProtein, getStructure, getPartners, findByGene } from './api.js';
 import { showStructure } from './viewer.js';
 import { drawNetwork, drawChart } from './charts.js';
 
@@ -50,6 +50,10 @@ async function run(card, fn) {
   const st = $('.state', card); st.className = 'state'; st.innerHTML = '<span class="spin"></span> Caricamento…';
   try { await fn(); st.innerHTML = ''; } catch (e) { st.className = 'state err'; st.textContent = `Impossibile caricare i dati: ${e.message}`; }
 }
+async function openPartner(gene, taxid) {
+  try { openTab(await findByGene(gene, taxid)); }
+  catch (e) { alert(`Impossibile aprire ${gene}: ${e.message}`); }
+}
 function loadProtein(tab) {
   const { acc, panel } = tab, k = (n) => $(`[data-k=${n}]`, panel), card = (n) => k(n).closest('.card');
   const L = { af: `https://alphafold.ebi.ac.uk/entry/${acc}`, pk: `https://prankweb.cz/afdb?uniprot-id=${acc}`, up: `https://www.uniprot.org/uniprotkb/${acc}`, st: `https://string-db.org/network/${tab.p.taxid}.${acc}` };
@@ -70,10 +74,10 @@ function loadProtein(tab) {
   const partners = getPartners(acc, tab.p.taxid); partners.catch(() => {});
   run(card('net'), async () => {
     const ps = await partners; if (!ps.length) throw new Error('Nessun partner trovato in STRING');
-    tab.cy = drawNetwork(k('net'), tab.p.gene || acc, ps);
+    tab.cy = drawNetwork(k('net'), tab.p.gene || acc, ps, g => openPartner(g, tab.p.taxid));
   });
   run(card('chart'), async () => {
     const ps = await partners; if (!ps.length) throw new Error('Nessun partner trovato in STRING');
-    tab.chart = drawChart(k('chart'), ps);
+    tab.chart = drawChart(k('chart'), ps, g => openPartner(g, tab.p.taxid));
   });
 }
