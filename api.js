@@ -44,3 +44,9 @@ export async function getPartners(acc, taxid) {
   const d = await getJSON(`https://string-db.org/api/json/interaction_partners?identifiers=${acc}&species=${taxid}&limit=15&caller_identity=proteine-dashboard`);
   return d.map(x => ({ name: x.preferredName_B, score: x.score, exp: x.escore, db: x.dscore, txt: x.tscore, validated: x.escore > 0 || x.dscore > 0 }));
 }
+export async function findByGene(gene, taxid) {
+  let r = await searchProteins(`(gene_exact:${gene}) AND (organism_id:${taxid}) AND (reviewed:true)`);
+  if (!r.length) r = await searchProteins(`(gene:${gene}) AND (organism_id:${taxid})`);
+  if (!r.length) throw new Error(`Nessuna voce UniProt trovata per ${gene}`);
+  return r[0];
+}
